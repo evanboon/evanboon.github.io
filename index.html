@@ -1,0 +1,278 @@
+<!-- If this site is broken - whoops! The next hint is to take a closer look at something red and flowery you received recently -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oh hey there...</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #fff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .container.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #d63384;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .timer {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #e91e63;
+            margin: 2rem 0;
+            font-family: monospace;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .input-section {
+            margin-top: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"] {
+            padding: 0.75rem 1.5rem;
+            font-size: 1.2rem;
+            border: 2px solid #e91e63;
+            border-radius: 25px;
+            width: 250px;
+            text-align: center;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #d63384;
+            box-shadow: 0 0 20px rgba(214, 51, 132, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #e91e63, #d63384);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-family: inherit;
+            transition: transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hearts {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+
+        /* Developer note - visible only in Inspect Elements */
+        .dev-note {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #ffeb3b;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        /* Show dev note when inspected */
+        body.inspect .dev-note {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hearts">❤️</div>
+
+    <div id="container" class="container">
+        <!-- Initial message phase -->
+        <div id="initialMessage">
+            <h1>Oh hey 😶</h1>
+            <p>Come on, you're dating a guy in IT, you should know better to click on stuff like this</p>
+            <p>Just kidding.</p>
+            <p>I have a little mission for you. I might be able to give you some hints if you text me but honestly, I've probably forgotten by now - so consider things carefully!</p>
+            <p>Anyways I gotta get some stuff ready - maybe check back in: <span id="timer" class="timer">5:00</span></p>
+        </div>
+
+        <!-- Timer complete phase -->
+        <div id="timerComplete" style="display: none;">
+
+            <p>Ok here we go. I think we're all good.</p>
+            <p>Maybe consider where we have seen each other since Calgary, and how you read your bracelet. </p>
+            
+            <div class="input-section">
+                <label for="codeInput">Enter Code:</label>
+                <input type="text" id="codeInput" placeholder="W=0 L=1" maxlength="10">
+                <br>
+                <button id="submitBtn">Check</button>
+            </div>
+        </div>
+
+        <!-- Success phase -->
+        <div id="successMessage" style="display: none;">
+            <h1>Yeah that seems about right</h1>
+            <p>Anyways good luck!</p>
+            <p>Oh also - Just want to wish you a Happy Valentine's Day again! Hope you liked your gift 🌹</p>
+        </div>
+    </div>
+
+    <script>
+        // config
+        const TIMER_DURATION = 5 * 60;
+        const CORRECT_CODE = '0011011011';
+        // DOM elements
+        const container = document.getElementById('container');
+        const initialMessage = document.getElementById('initialMessage');
+        const timerComplete = document.getElementById('timerComplete');
+        const successMessage = document.getElementById('successMessage');
+        const timerDisplay = document.getElementById('timer');
+        const codeInput = document.getElementById('codeInput');
+        const submitBtn =   document.getElementById('submitBtn');
+
+        let timeLeft = TIMER_DURATION;
+        let timerInterval = null;
+        let isTimerComplete = false;
+
+        // Show initial container with fade-in
+        setTimeout(() => {
+            container.classList.add('show');
+        }, 500);
+
+        // Countdown timer logic
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    isTimerComplete = true;
+                    showTimerComplete();
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Transition to timer complete phase
+        function showTimerComplete() {
+            container.classList.add('fade-out');
+            setTimeout(() => {
+                initialMessage.style.display = 'none';
+                timerComplete.style.display = 'block';
+                container.classList.remove('fade-out');
+                container.classList.add('show');
+                codeInput.focus();
+            }, 800);
+        }
+
+        // Check code submission
+        function checkCode() {
+            const userCode = codeInput.value.trim().toUpperCase();
+            if (userCode === CORRECT_CODE) {
+                container.classList.add('fade-out');
+                setTimeout(() => {
+                    timerComplete.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    container.classList.remove('fade-out');
+                    container.classList.add('show');
+                }, 800);
+            } else {
+                // Shake animation for wrong code
+                codeInput.style.transform = 'translateX(-5px)';
+                setTimeout(() => {
+                    codeInput.style.transform = 'translateX(5px)';
+                }, 100);
+                setTimeout(() => {
+                    codeInput.style.transform = '';
+                }, 200);
+                codeInput.value = '';
+                codeInput.focus();
+            }
+        }
+
+        // Event listeners
+        submitBtn.addEventListener('click', checkCode);
+        codeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkCode();
+            }
+        });
+
+        // Start the timer after initial show
+        setTimeout(startTimer, 1000);
+
+        // Developer inspect detection (bonus feature)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                document.body.classList.add('inspect');
+            }
+        });
+    </script>
+</body>
+</html>
