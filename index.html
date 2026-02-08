@@ -1,12 +1,14 @@
-<!-- If this site is broken - whoops! The next hint is to take a closer look at something red and flowery you received recently -->
+<!-- HINT: We've seen eachother a lot! -->
+<!-- totally irrelavent binary for completely unrelated purposes: 0011011011 -->
 
+<!--Site code -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oh hey there...</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?">
     <style>
         /* Reset and base styles */
         * {
@@ -153,18 +155,18 @@
     <div id="container" class="container">
         <!-- Initial message phase -->
         <div id="initialMessage">
-            <h1>Oh hey 😶</h1>
-            <p>Come on, you're dating a guy in IT, you should know better to click on stuff like this</p>
+            <h1>Oh hey :)</h1>
+            <p>Come on, you're dating a guy in IT, you should know better to click on stuff like this!</p>
             <p>Just kidding.</p>
-            <p>I have a little mission for you. I might be able to give you some hints if you text me but honestly, I've probably forgotten by now - so consider things carefully!</p>
-            <p>Anyways I gotta get some stuff ready - maybe check back in: <span id="timer" class="timer">5:00</span></p>
+            <p>I have a little surprise for you, but there's some things you'll have to figure out first. I don't think it's easy - so consider things carefully!</p>
+            <p>Anyways I gotta get some stuff ready - try check back in: <span id="timer" class="timer">5:00</span></p>
         </div>
 
         <!-- Timer complete phase -->
         <div id="timerComplete" style="display: none;">
 
-            <p>Ok here we go. I think we're all good.</p>
-            <p>Maybe consider where we have seen each other since Calgary, and how you read your bracelet. </p>
+            <p>Ok here we go. We're all good.</p>
+            <p>Looks like there's a password. Maybe consider where we have seen each other since Calgary, and how you read your bracelet? __________</p>
             
             <div class="input-section">
                 <label for="codeInput">Enter Code:</label>
@@ -172,13 +174,15 @@
                 <br>
                 <button id="submitBtn">Check</button>
             </div>
+            <p style="color:lightslategray;font-style=italic">(...if you need a hint try going in "developor mode)</p>
+
         </div>
 
         <!-- Success phase -->
         <div id="successMessage" style="display: none;">
             <h1>Yeah that seems about right</h1>
-            <p>Anyways good luck!</p>
-            <p>Oh also - Just want to wish you a Happy Valentine's Day again! Hope you liked your gift 🌹</p>
+            <p>Ok that's all for now - good luck!</p>
+            <p>Oh yeah - Happy Valentine's Day again! Hope you liked your gift 🌹</p>
         </div>
     </div>
 
